@@ -5,6 +5,7 @@
   - [🎤 Introduction](#-introduction)
     - [What is this project?](#what-is-this-project)
     - [What are technical stacks for this project?](#what-are-technical-stacks-for-this-project)
+  - [Plans](#plans)
 
 
 ## 🎤 Introduction
@@ -21,3 +22,4 @@ You can see subjects in [this markdown file](/docs/subject.en.md), or [SEA-ME](h
 to be done
 ```
 
+## Plans
