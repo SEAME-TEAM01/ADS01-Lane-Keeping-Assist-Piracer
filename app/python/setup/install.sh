@@ -14,6 +14,7 @@ source  $ADS_ENV_FOLDER/bin/activate
 pip3    install --upgrade pip
 
 # python libraries install
-pip3    install pandas \
+pip3    install pylint \
+                pandas \
                 numpy \
                 opencv-python
