@@ -6,4 +6,5 @@ This folder stores documentations.
 - [`.. [/]`](/)
 - [`architecture/`](/docs/architecture/)
 - [`collaboration/`](/docs/collaboration/)
+- [`useful-documents.md`](/docs/useful-documents.md)
 - [`subject.en.md`](/docs/subject.en.md)
