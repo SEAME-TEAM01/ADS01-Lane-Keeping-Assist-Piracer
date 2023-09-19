@@ -17,4 +17,3 @@ while frame.isOpened():
 
 frame.release()
 cv2.destroyAllWindows()
-
