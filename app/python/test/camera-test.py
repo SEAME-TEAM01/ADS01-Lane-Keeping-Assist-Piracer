@@ -1,9 +1,9 @@
 import  cv2
 
-frame = cv2.VideoCapture(0)
+frm = cv2.VideoCapture(0)
 
-while frame.isOpened():
-    rst, img = frame.read()
+while frm.isOpened():
+    rst, img = frm.read()
     if img is None:
         print("Image Load Failure")
         break
@@ -15,5 +15,5 @@ while frame.isOpened():
     if act == ord('q') or act == 113:
         break
 
-frame.release()
+frm.release()
 cv2.destroyAllWindows()
