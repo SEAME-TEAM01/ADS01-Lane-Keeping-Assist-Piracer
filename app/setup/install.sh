@@ -17,6 +17,4 @@ pip3    install --upgrade pip
 pip3    install pylint \
                 pandas \
                 numpy \
-                opencv-python \
-		picamera
-
+                opencv-python
