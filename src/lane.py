@@ -1,5 +1,6 @@
 import sys
 import cv2
+import math
 import os
 import numpy as np
 import edge_detection as edge
@@ -401,7 +402,6 @@ class Lane:
       plt.show()
 
 
-
   """
     Overlay lane lines on the original frame
     :return: Lane with overlay
@@ -524,6 +524,37 @@ class Lane:
 
     return image_copy
 
+  """
+    Draw the center line on the image
+  """
+  def display_heading_line(self, frame=None, plot=False):
+    if frame is None:
+      return
+
+    heading_image = np.zeros_like(frame)
+
+    x_offset = self.calculate_car_position()
+    y_offset = int(self.height/ 2)
+
+    angle_to_mid_radian = math.atan(x_offset / y_offset)
+    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)
+    steering_angle = angle_to_mid_deg + 90
+    steering_angle_radian = steering_angle / 180.0 * math.pi
+
+    x1 = int(self.width / 2)
+    y1 = self.height
+    x2 = int(x1 - self.height / 2 / math.tan(steering_angle_radian))
+    y2 = int(self.height / 1.5)
+
+    cv2.line(heading_image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+    heading_image = cv2.addWeighted(frame, 0.8, heading_image, 1, 1)
+
+    if plot == True:
+      cv2.imshow("Heading Line", heading_image)
+      cv2.waitKey(0)
+      cv2.destroyAllWindows()
+
+
 
 def lane_tracker_video():
   cap = cv2.VideoCapture('./assets/road1.mp4')
@@ -592,10 +623,7 @@ def lane_tracker_image():
   # Overlay lines on the original frame
   frame_with_lane_lines, save_img = lane_obj.overlay_lane_lines(plot=False)
 
-  cv2.imshow("lane overlayed image", frame_with_lane_lines)
-  cv2.waitKey(0)
-  cv2.destroyAllWindows()
-
+  lane_obj.display_heading_line(frame=frame_with_lane_lines, plot=True)
 
 if __name__ == '__main__':
   lane_tracker_image()
