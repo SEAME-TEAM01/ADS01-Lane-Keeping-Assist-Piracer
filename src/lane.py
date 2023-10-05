@@ -20,12 +20,21 @@ class Lane:
     self.width = width
     self.height = height
 
+    # self.roi_points = np.float32([
+    #   (474, 295), # Top-left corner
+    #   (7, 528),   # Bottom-left corner
+    #   (900, 528), # Bottom-right corner
+    #   (615, 295)  # Top-right corner
+    # ])
+
+    # road1.jpg
     self.roi_points = np.float32([
-      (474, 295), # Top-left corner
-      (7, 528),   # Bottom-left corner
-      (900, 528), # Bottom-right corner
-      (615, 295)  # Top-right corner
+      (476, 432), # Top-left corner
+      (134, 672),   # Bottom-left corner
+      (1066, 672), # Bottom-right corner
+      (752, 432)  # Top-right corner
     ])
+
 
     self.padding = int(0.25 * width)
     self.desired_roi_points = np.float32([
@@ -558,6 +567,35 @@ def lane_tracker_video():
   cap.release()
   cv2.destroyAllWindows()
 
+def lane_tracker_image():
+  original_frame = cv2.imread('./assets/road1.jpg')
+  lane_obj = Lane(orig_frame=original_frame)
+
+  # Perform thresholding to isolate lane lines
+  lane_line_markings = lane_obj.get_line_markings()
+
+  # Plot the region of interest on the iamge
+  lane_obj.plot_roi(plot=False)
+
+  # Perform the perspective transform to generate a bird's eye view
+  warped_frame = lane_obj.perspective_transform(plot=False)
+
+  # Generate the image histogram to serve as a starting point for finding lane line pixels
+  histogram = lane_obj.calculate_histogram(plot=False)
+
+  # Find lane line pixels using the sliding window method
+  left_fit, right_fit = lane_obj.get_lane_line_indices_sliding_windows(plot=False)
+
+  # Fill in the lane line
+  lane_obj.get_lane_line_previous_window(left_fit, right_fit, plot=False)
+
+  # Overlay lines on the original frame
+  frame_with_lane_lines, save_img = lane_obj.overlay_lane_lines(plot=False)
+
+  cv2.imshow("lane overlayed image", frame_with_lane_lines)
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
-  lane_tracker_video()
+  lane_tracker_image()
