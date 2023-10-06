@@ -1,6 +1,6 @@
 import cv2
 from lane_detection import lane
-from piracer import operate_radian
+from piracer.operate_radian import set_steering_radians
 from piracer.vehicles import PiRacerStandard
 
 
@@ -14,7 +14,7 @@ if __name__ == '__main__':
       break
     frame, radian = lane.lane_tracker(original_frame)
     cv2.imshow('frame', frame)
-    operate_radian.set_steering_radians(piracer=vehicle ,radians=radian)
+    set_steering_radians(piracer=vehicle ,radians=radian)
     if cv2.waitKey(10) == 27:
       break
   cap.release()
