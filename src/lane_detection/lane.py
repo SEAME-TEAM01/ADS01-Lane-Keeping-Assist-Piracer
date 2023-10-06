@@ -20,6 +20,7 @@ class Lane:
     height = self.orig_image_size[1]
     self.width = width
     self.height = height
+    self.curr_steering_angle = 90
 
     # road.1.mp4
     self.roi_points = np.float32([
@@ -534,7 +535,30 @@ class Lane:
     angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)
     steering_angle = angle_to_mid_deg + 90
 
-    return steering_angle, angle_to_mid_radian
+    self.curr_steering_angle = self.stabilize_steering_angle(self.curr_steering_angle, steering_angle, 2)
+    angle_to_mid_radian = (self.curr_steering_angle - 90) * math.pi / 180.0
+    return self.curr_steering_angle, angle_to_mid_radian
+
+  """
+  Using last steering angle to stabilize the steering angle
+  This can be improved to use last N angles, etc
+  if new angle is too different from current angle, only turn by max_angle_deviation degrees
+  """
+  def stabilize_steering_angle(curr_steering_angle, new_steering_angle, num_of_lane_lines, max_angle_deviation_two_lines=5, max_angle_deviation_one_lane=1):
+    if num_of_lane_lines == 2 :
+        # if both lane lines detected, then we can deviate more
+        max_angle_deviation = max_angle_deviation_two_lines
+    else :
+        # if only one lane detected, don't deviate too much
+        max_angle_deviation = max_angle_deviation_one_lane
+
+    angle_deviation = new_steering_angle - curr_steering_angle
+    if abs(angle_deviation) > max_angle_deviation:
+        stabilized_steering_angle = int(curr_steering_angle
+                                        + max_angle_deviation * angle_deviation / abs(angle_deviation))
+    else:
+        stabilized_steering_angle = new_steering_angle
+    return stabilized_steering_angle
 
 
   """
