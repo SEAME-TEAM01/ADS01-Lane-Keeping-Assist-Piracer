@@ -1,3 +1,5 @@
 opencv-python==4.6.0.66
 numpy==1.25.2
 matplotlib==3.7.2
+piracer
+ piracer-py==0.1.1

@@ -21,20 +21,21 @@ class Lane:
     self.width = width
     self.height = height
 
-    # self.roi_points = np.float32([
-    #   (474, 295), # Top-left corner
-    #   (7, 528),   # Bottom-left corner
-    #   (900, 528), # Bottom-right corner
-    #   (615, 295)  # Top-right corner
-    # ])
+    # road.1.mp4
+    self.roi_points = np.float32([
+      (420, 306), # Top-left corner
+      (10, 537),   # Bottom-left corner
+      (899, 537), # Bottom-right corner
+      (599, 306)  # Top-right corner
+    ])
 
     # road1.jpg
-    self.roi_points = np.float32([
-      (476, 432), # Top-left corner
-      (134, 672),   # Bottom-left corner
-      (1066, 672), # Bottom-right corner
-      (752, 432)  # Top-right corner
-    ])
+    # self.roi_points = np.float32([
+    #   (476, 432), # Top-left corner
+    #   (134, 672),   # Bottom-left corner
+    #   (1066, 672), # Bottom-right corner
+    #   (752, 432)  # Top-right corner
+    # ])
 
 
     self.padding = int(0.25 * width)
@@ -524,21 +525,27 @@ class Lane:
 
     return image_copy
 
+  def compute_steering_angle(self):
+    x_offset = self.calculate_car_position()
+    y_offset = int(self.height/ 2)
+
+    angle_to_mid_radian = math.atan(x_offset / y_offset)
+    print(angle_to_mid_radian)
+    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)
+    steering_angle = angle_to_mid_deg + 90
+
+    return steering_angle
+
+
   """
     Draw the center line on the image
   """
-  def display_heading_line(self, frame=None, plot=False):
+  def display_heading_line(self, frame=None, steering_angle=None, plot=False):
     if frame is None:
       return
 
     heading_image = np.zeros_like(frame)
 
-    x_offset = self.calculate_car_position()
-    y_offset = int(self.height/ 2)
-
-    angle_to_mid_radian = math.atan(x_offset / y_offset)
-    angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)
-    steering_angle = angle_to_mid_deg + 90
     steering_angle_radian = steering_angle / 180.0 * math.pi
 
     x1 = int(self.width / 2)
@@ -553,11 +560,13 @@ class Lane:
       cv2.imshow("Heading Line", heading_image)
       cv2.waitKey(0)
       cv2.destroyAllWindows()
+    return heading_image
 
 
 
 def lane_tracker_video():
   cap = cv2.VideoCapture('./assets/road1.mp4')
+  ret, original_frame = cap.read()
   while(cap.isOpened()):
     ret, original_frame = cap.read()
     if ret == False:
@@ -585,14 +594,11 @@ def lane_tracker_video():
     # Overlay lines on the original frame
     frame_with_lane_lines, save_img = lane_obj.overlay_lane_lines(plot=False)
 
-    # Calculate lane line curvature (left and right lane lines)
-    lane_obj.calculate_curvature(point_to_terminal=False)
+    steering_angle = lane_obj.compute_steering_angle()
 
-    # Calculate center offset
-    lane_obj.calculate_car_position(print_to_terminal=False)
+    ret = lane_obj.display_heading_line(frame=frame_with_lane_lines, steering_angle=steering_angle, plot=False)
 
-    # Display curvature and center offset on image
-    frame_with_lane_lines2 = lane_obj.display_curvature_offset(frame=frame_with_lane_lines, plot=True)
+    cv2.imshow('frame', ret)
     if cv2.waitKey(10) == 27:
       break
   cap.release()
@@ -623,7 +629,9 @@ def lane_tracker_image():
   # Overlay lines on the original frame
   frame_with_lane_lines, save_img = lane_obj.overlay_lane_lines(plot=False)
 
-  lane_obj.display_heading_line(frame=frame_with_lane_lines, plot=True)
+  steering_angle = lane_obj.compute_steering_angle()
+
+  lane_obj.display_heading_line(frame=frame_with_lane_lines, steering_angle=steering_angle, plot=True)
 
 if __name__ == '__main__':
-  lane_tracker_image()
+  lane_tracker_video()
