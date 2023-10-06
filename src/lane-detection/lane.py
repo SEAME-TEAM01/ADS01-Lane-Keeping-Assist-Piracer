@@ -562,10 +562,8 @@ class Lane:
       cv2.destroyAllWindows()
     return heading_image
 
-
-
 def lane_tracker_video():
-  cap = cv2.VideoCapture('./assets/road1.mp4')
+  cap = cv2.VideoCapture(0)
   ret, original_frame = cap.read()
   while(cap.isOpened()):
     ret, original_frame = cap.read()
