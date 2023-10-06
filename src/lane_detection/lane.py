@@ -3,7 +3,7 @@ import cv2
 import math
 import os
 import numpy as np
-import edge_detection as edge
+from . import edge_detection as edge
 import matplotlib.pyplot as plt
 
 class Lane:
@@ -534,7 +534,7 @@ class Lane:
     angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)
     steering_angle = angle_to_mid_deg + 90
 
-    return steering_angle
+    return steering_angle, angle_to_mid_radian
 
 
   """
@@ -562,48 +562,7 @@ class Lane:
       cv2.destroyAllWindows()
     return heading_image
 
-def lane_tracker_video():
-  cap = cv2.VideoCapture(0)
-  ret, original_frame = cap.read()
-  while(cap.isOpened()):
-    ret, original_frame = cap.read()
-    if ret == False:
-      break
-    lane_obj = Lane(orig_frame=original_frame)
-
-    # Perform thresholding to isolate lane lines
-    lane_line_markings = lane_obj.get_line_markings()
-
-    # Plot the region of interest on the iamge
-    lane_obj.plot_roi(plot=False)
-
-    # Perform the perspective transform to generate a bird's eye view
-    warped_frame = lane_obj.perspective_transform(plot=False)
-
-    # Generate the image histogram to serve as a starting point for finding lane line pixels
-    histogram = lane_obj.calculate_histogram(plot=False)
-
-    # Find lane line pixels using the sliding window method
-    left_fit, right_fit = lane_obj.get_lane_line_indices_sliding_windows(plot=False)
-
-    # Fill in the lane line
-    lane_obj.get_lane_line_previous_window(left_fit, right_fit, plot=False)
-
-    # Overlay lines on the original frame
-    frame_with_lane_lines, save_img = lane_obj.overlay_lane_lines(plot=False)
-
-    steering_angle = lane_obj.compute_steering_angle()
-
-    ret = lane_obj.display_heading_line(frame=frame_with_lane_lines, steering_angle=steering_angle, plot=False)
-
-    cv2.imshow('frame', ret)
-    if cv2.waitKey(10) == 27:
-      break
-  cap.release()
-  cv2.destroyAllWindows()
-
-def lane_tracker_image():
-  original_frame = cv2.imread('./assets/road1.jpg')
+def lane_tracker(original_frame):
   lane_obj = Lane(orig_frame=original_frame)
 
   # Perform thresholding to isolate lane lines
@@ -627,9 +586,11 @@ def lane_tracker_image():
   # Overlay lines on the original frame
   frame_with_lane_lines, save_img = lane_obj.overlay_lane_lines(plot=False)
 
-  steering_angle = lane_obj.compute_steering_angle()
+  steering_angle, radian = lane_obj.compute_steering_angle()
 
-  lane_obj.display_heading_line(frame=frame_with_lane_lines, steering_angle=steering_angle, plot=True)
+  ret = lane_obj.display_heading_line(frame=frame_with_lane_lines, steering_angle=steering_angle, plot=False)
+
+  return ret, radian
 
 if __name__ == '__main__':
-  lane_tracker_video()
+  lane_tracker()
