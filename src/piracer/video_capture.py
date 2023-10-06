@@ -1,37 +1,34 @@
 import cv2
-from datetime import datetime
-
-DEV_ID = 0
-
-WIDTH = 640
-HEIGHT = 480
-FPS = 5
-
-REC_SEC = 10
-
-def main():
-    cap = cv2.VideoCapture(DEV_ID)
-
-    cap.set(cv2.CAP_PROP_FPS, FPS)
-
-    date = datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = "./" + date + ".mp4"
-
-    flip_matrix = cv2.flip
-    frame = flip_matrix(frame, 0)
-
-    fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-    out = cv2.VideoWriter(path, fourcc, FPS, (WIDTH, HEIGHT))
-
-    for _ in range(FPS * REC_SEC):
-        ret, frame = cap.read()
-        out.write(frame)
-
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
-    return
 
 
-if __name__ == "__main__":
-    main()
+cap = cv2.VideoCapture(0)  
+
+
+cap.set(cv2.CAP_PROP_FPS, 20)  
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  
+
+
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  
+out = cv2.VideoWriter('output.mp4', fourcc, 20.0, (640, 480))  
+
+while True:
+    ret, frame = cap.read()  
+
+    if not ret:
+        break
+
+    
+    frame = cv2.flip(frame, 0)  
+
+    out.write(frame)  
+
+    cv2.imshow('frame', frame)  
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+
+cap.release()  
+out.release()  
+cv2.destroyAllWindows()  
