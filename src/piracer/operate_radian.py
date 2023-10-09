@@ -15,3 +15,4 @@ def set_steering_radians(piracer=None, radian=1):
     print(radian, scaled_percent)
 
     piracer.set_steering_percent(scaled_percent)
+    piracer.set_throttle_percent(0.2)
