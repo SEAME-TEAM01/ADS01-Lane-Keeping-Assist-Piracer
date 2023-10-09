@@ -4,7 +4,7 @@ import queue
 import traceback
 
 #def car_control(vehicle: PiRacerStandard, gamepad: ShanWanGamepad, q):
-def car_control(q):
+def car_control():
 
     gamepad = ShanWanGamepad()
     vehicle = PiRacerStandard()
@@ -25,11 +25,6 @@ def car_control(q):
             #put gamepad input into queue
             throttle = round(throttle, 3)
             steering = round(steering, 3)
-
-            try:
-                q.put_nowait((throttle, steering))
-            except queue.Full:
-                q.get()
 
     except Exception as e:
         print(" - Car control process has been stopped. - ")
