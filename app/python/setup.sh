@@ -1,5 +1,5 @@
 # variables setting
-export ADS_ENV_FOLDER="ads_venv"
+export ADS_ENV_FOLDER="ads_cnn"
 mkdir ~/envs >> /dev/null
 
 # python updating & install
@@ -15,10 +15,9 @@ source  ~/envs/$ADS_ENV_FOLDER/bin/activate
 pip3    install --upgrade pip
 
 # python libraries install
-pip3    install -r requirement.txt
+# pip3    install -r requirement.txt
 pip3    install pylint \
                 pandas \
                 numpy \
-                opencv-python \
-		picamera
+     		picamera2
 
