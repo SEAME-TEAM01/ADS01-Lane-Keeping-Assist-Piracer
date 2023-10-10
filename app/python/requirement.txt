@@ -9,8 +9,10 @@ certifi==2023.7.22
 charset-normalizer==3.3.0
 decorator==4.4.2
 dill==0.3.7
+distlib==0.3.7
 docopt==0.6.2
 -e git+https://github.com/waveshare/donkeycar@1bbd13f8db4f61c6fe8f734a7608d851e94b7003#egg=donkeycar
+filelock==3.12.4
 flatbuffers==20181003210633
 gast==0.4.0
 google-auth==2.23.2
@@ -25,6 +27,7 @@ importlib-metadata==6.8.0
 isort==5.12.0
 keras==2.10.0
 Keras-Preprocessing==1.1.2
+kms==1.0.1.3
 libclang==16.0.6
 Markdown==3.4.4
 MarkupSafe==2.1.3
@@ -69,6 +72,7 @@ tqdm==4.66.1
 typing_extensions==4.8.0
 tzdata==2023.3
 urllib3==2.0.6
+virtualenv==20.24.5
 wcwidth==0.2.8
 Werkzeug==3.0.0
 wrapt==1.15.0
