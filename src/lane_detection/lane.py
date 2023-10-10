@@ -103,7 +103,7 @@ class Lane:
   def detect_line_segments(self, cropped_edges):
     rho = 1  # distance precision in pixel, i.e. 1 pixel
     angle = np.pi / 180  # angular precision in radian, i.e. 1 degree
-    min_threshold = 10  # minimal of votes
+    min_threshold = 15  # minimal of votes
     line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold,
                                     np.array([]), minLineLength=5, maxLineGap=10)
 
@@ -134,12 +134,13 @@ class Lane:
     left_fit = []
     right_fit = []
 
-    boundary = 1/3
+    boundary = 1/2
     left_region_boundary = width * (1 - boundary)
     right_region_boundary = width * boundary
 
     for line_segment in line_segments:
         for x1, y1, x2, y2 in line_segment:
+            # print(x1, y1, x2, y2)
             if x1 == x2:
                 continue
             fit = np.polyfit((x1, x2), (y1, y2), 1)
@@ -167,8 +168,8 @@ class Lane:
     mask = np.zeros_like(edges)
 
     polygon = np.array([[
-        (0, height * 1 / 8),
-        (width, height * 1 / 8),
+        (0, height * 1 / 4),
+        (width, height * 1 / 4),
         (width, height),
         (0, height),
     ]], np.int32)
@@ -186,14 +187,19 @@ class Lane:
     mask = cv2.inRange(hsv, lower_orange, upper_orange)
 
     frame = self.Canny(mask, thresh=(100, 200))
+    # cv2.imshow('canny', frame)
 
     cropped_edges = self.region_of_interest(frame)
+    # cv2.imshow('cropped', cropped_edges)
 
     line_segments = self.detect_line_segments(cropped_edges)
     # self.draw_line_segments(original_frame, line_segments)
 
     lane_lines = self.average_slope_intercept(original_frame, line_segments)
     lane_lines_image = self.display_lines(original_frame, lane_lines)
+    # cv2.imshow('Lane Detection', lane_lines_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     steering_angle = self.calc_steering_angle(original_frame, lane_lines)
     heading_image = self.display_heading_line(lane_lines_image, steering_angle)
@@ -203,7 +209,7 @@ class Lane:
 
 if __name__ == '__main__':
   lane = Lane()
-  frame = cv2.imread('dataset/frame_0314.jpg')
+  frame = cv2.imread('dataset/frame02_0443.jpg')
   radian,frame =  lane.lane_tracker(frame)
   cv2.imshow('frame', frame)
   cv2.waitKey(0)

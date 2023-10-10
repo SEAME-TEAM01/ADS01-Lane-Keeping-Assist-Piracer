@@ -13,4 +13,4 @@ def set_steering_radians(piracer=None, radian=1):
         scaled_percent = -1.0 if radian < min_radian else 1.0
 
     piracer.set_steering_percent(scaled_percent)
-    piracer.set_throttle_percent(0.1)
+    piracer.set_throttle_percent(0.4)
