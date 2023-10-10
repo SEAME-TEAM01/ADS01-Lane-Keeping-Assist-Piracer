@@ -1,10 +1,10 @@
 import cv2
 from lane_detection.lane import Lane
-# import piracer
+import piracer
 
 
 if __name__ == '__main__':
-  # vehicle = piracer.vehicles.PiRacerStandard()
+  vehicle = piracer.vehicles.PiRacerStandard()
   lane = Lane();
   cap = cv2.VideoCapture(0)
 
@@ -13,8 +13,7 @@ if __name__ == '__main__':
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 
 
-  i = 0
-  while(i < 500):
+  while(cap.isOpened()):
     ret, original_frame = cap.read()
     if ret == False:
       break
@@ -22,7 +21,7 @@ if __name__ == '__main__':
 
     cv2.imshow('frame', frame)
 
-    # piracer.operate_radian.set_steering_radians(piracer=vehicle ,radians=radian)
+    piracer.operate_radian.set_steering_radians(piracer=vehicle ,radians=radian)
     if cv2.waitKey(10) == 27:
       break
     i += 1
