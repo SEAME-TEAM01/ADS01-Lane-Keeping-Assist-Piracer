@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 class Lane:
   def __init__(self):
@@ -39,9 +40,11 @@ class Lane:
             x1, y1, x2, y2 = line_segment[0]
             cv2.line(original_frame, (x1, y1), (x2, y2), line_color, line_thickness)
 
-    cv2.imshow('Lane Detection', original_frame)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow('Lane Detection', original_frame)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    plt.imshow(original_frame)
+    plt.show()
 
   # Thresholding function
   def Canny(self, frame, thresh=(128, 255)):
@@ -49,8 +52,6 @@ class Lane:
 
   def blur_gaussian(self, frame, ksize=3):
     return cv2.GaussianBlur(frame, (ksize, ksize), 0)
-
-
 
     # Steering angle calculation
   def calc_steering_angle(self, frame, lane_lines):
@@ -103,9 +104,9 @@ class Lane:
   def detect_line_segments(self, cropped_edges):
     rho = 1  # distance precision in pixel, i.e. 1 pixel
     angle = np.pi / 180  # angular precision in radian, i.e. 1 degree
-    min_threshold = 15  # minimal of votes
+    min_threshold = 10  # minimal of votes
     line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold,
-                                    np.array([]), minLineLength=5, maxLineGap=10)
+                                    np.array([]), minLineLength=50, maxLineGap=40)
 
     return line_segments
 
@@ -137,7 +138,6 @@ class Lane:
     boundary = 1/2
     left_region_boundary = width * (1 - boundary)
     right_region_boundary = width * boundary
-
     for line_segment in line_segments:
         for x1, y1, x2, y2 in line_segment:
             # print(x1, y1, x2, y2)
@@ -152,13 +152,12 @@ class Lane:
             else:
                 if x1 > right_region_boundary and x2 > right_region_boundary:
                     right_fit.append((slope, intercept))
-
-    left_fit_average = np.average(left_fit, axis=0)
     if len(left_fit) > 0:
+        left_fit_average = np.average(left_fit, axis=0)
         lane_lines.append(self.make_points(frame, left_fit_average))
 
-    right_fit_average = np.average(right_fit, axis=0)
     if len(right_fit) > 0:
+        right_fit_average = np.average(right_fit, axis=0)
         lane_lines.append(self.make_points(frame, right_fit_average))
 
     return lane_lines
@@ -187,7 +186,6 @@ class Lane:
     mask = cv2.inRange(hsv, lower_orange, upper_orange)
 
     frame = self.Canny(mask, thresh=(100, 200))
-    # cv2.imshow('canny', frame)
 
     cropped_edges = self.region_of_interest(frame)
     # cv2.imshow('cropped', cropped_edges)
@@ -209,7 +207,7 @@ class Lane:
 
 if __name__ == '__main__':
   lane = Lane()
-  frame = cv2.imread('dataset/frame02_0443.jpg')
+  frame = cv2.imread('dataset/frame02_0468.jpg')
   radian,frame =  lane.lane_tracker(frame)
   cv2.imshow('frame', frame)
   cv2.waitKey(0)

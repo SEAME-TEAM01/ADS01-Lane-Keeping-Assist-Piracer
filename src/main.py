@@ -6,7 +6,7 @@ import piracer
 if __name__ == '__main__':
   vehicle = piracer.vehicles.PiRacerStandard()
   lane = Lane();
-  cap = cv2.VideoCapture('assets/piracer_pov2.mp4')
+  cap = cv2.VideoCapture('assets/piracer_pov3.mp4')
 
   cap.set(cv2.CAP_PROP_FPS, 20)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     cv2.flip(original_frame, 0)
     radian, frame = lane.lane_tracker(original_frame)
     print(i, radian)
-    # frame_filename = f'dataset/frame02_{i:04d}.jpg'
+    # frame_filename = f'dataset/frame_{i:04d}.jpg'
     # cv2.imwrite(frame_filename, original_frame)
     cv2.imshow('frame', frame)
     i += 1
@@ -31,3 +31,23 @@ if __name__ == '__main__':
 
   cap.release()
   cv2.destroyAllWindows()
+
+# if __name__ == '__main__':
+  # vehicle = piracer.
+  # vehicles.PiRacerStandard()
+  # lane = Lane();
+
+
+  # i = 0
+  # while(i < 500):
+  #   original_frame = cv2.imread(f'dataset/frame_{i:04d}.jpg')
+  #   radian, frame = lane.lane_tracker(original_frame)
+  #   print(i, radian)
+  #   frame_filename = f'dataset/frame_{i:04d}.jpg'
+  #   cv2.imshow('frame', frame)
+  #   cv2.waitKey(0)
+  #   i += 1
+  #   if cv2.waitKey(1) & 0xFF == ord('q'):
+  #     break
+  #   # piracer.operate_radian.set_steering_radians(piracer=vehicle ,radian=radian)
+  # cv2.destroyAllWindows()
