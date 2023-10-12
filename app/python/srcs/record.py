@@ -6,7 +6,7 @@ import      traceback           as      trc
 import      multiprocessing     as      mlp
 import      os
 
-CSVFILE     = "steering.csv"
+CSVFILE     = "dataset/record/record.csv"
 
 def process_control_car():
     print("car control started.")
@@ -17,14 +17,14 @@ def process_control_car():
         while True:
             gamepad_input   = pad.read_data()
             throttle        = gamepad_input.analog_stick_left.y
-            steering        = gamepad_input.analog_stick_right.y
+            steering        = gamepad_input.analog_stick_right.x
 
             veh.set_steering_percent(steering * 1.3)
             veh.set_throttle_percent(throttle * 0.6)
 
             # Log steering and frame info
             with open(CSVFILE, "a") as csv_file:
-                csv_file.write(f"{tim.time()}, {steering}\n")
+                csv_file.write(f"{tim.time()},{steering}{throttle}\n")
 
     except Exception as e:
         print("An error occurred:", e)
@@ -57,7 +57,7 @@ def process_capture_img():
                 print("Error: Could not read frame.")
                 break
             
-            cv2.imwrite(f'frame_{tim.time()}.jpg', frame)
+            cv2.imwrite(f'dataset/record/frames/frame_{tim.time()}.jpg', frame)
     finally:
         cap.release()
         cv2.destroyAllWindows()
@@ -65,9 +65,8 @@ def process_capture_img():
 if __name__ == '__main__':
     if not os.path.exists(CSVFILE):
         with open(CSVFILE, "w") as file:
-            file.write("miliseconds,steering\n")
+            file.write("miliseconds,steering,throttle\n")
 
-    # pipe_car, pipe_img = mlp.Pipe()
     pr1 = mlp.Process(
         name="python3-car-control",
         target=process_control_car,
