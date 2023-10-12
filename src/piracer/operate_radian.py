@@ -1,8 +1,8 @@
 import math
 
 def set_steering_radians(piracer=None, radian=1):
-    # if piracer is None:
-        # return
+    if piracer is None:
+        return
 
     max_radian = math.radians(135)
     min_radian = math.radians(45)

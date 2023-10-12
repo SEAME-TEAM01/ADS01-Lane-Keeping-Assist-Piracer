@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 class Lane:
   def __init__(self):
     self.curr_steering_angle = 90
+    self.original_frame = None
 
   # Drawing function
   def display_heading_line(self, frame, steering_angle, line_color=(0, 0, 255), line_width=5 ):
@@ -22,17 +23,21 @@ class Lane:
     heading_image = cv2.addWeighted(frame, 0.8, heading_image, 1, 1)
     return heading_image
 
-  def display_lines(self, frame, lines, line_color=(0, 255, 0), line_width=4):
+  def display_lines(self, frame, lines, line_color=(0, 255, 0), line_width=4, plot=False):
     line_image = np.zeros_like(frame)
     if lines is not None:
         for line in lines:
             for x1, y1, x2, y2 in line:
                 cv2.line(line_image, (x1, y1), (x2, y2), line_color, line_width)
     line_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+    if plot == True:
+      cv2.imshow('Lane Detection', line_image)
+      cv2.waitKey(0)
+      cv2.destroyAllWindows()
     return line_image
 
   def draw_line_segments(self, original_frame, line_segments):
-    line_color = (0, 255, 0)  # Green color for drawing lines
+    line_color = (0, 255, 0)
     line_thickness = 2
 
     if line_segments is not None:
@@ -40,9 +45,6 @@ class Lane:
             x1, y1, x2, y2 = line_segment[0]
             cv2.line(original_frame, (x1, y1), (x2, y2), line_color, line_thickness)
 
-    # cv2.imshow('Lane Detection', original_frame)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
     plt.imshow(original_frame)
     plt.show()
 
@@ -65,16 +67,14 @@ class Lane:
     else:
         _, _, left_x2, _ = lane_lines[0][0]
         _, _, right_x2, _ = lane_lines[1][0]
-        # 0.0 means car pointing to center, -0.03: car is centered to left, +0.03 means car pointing to right
-        camera_mid_offset_percent = 0.00
-        mid = int(width / 2 * (1 + camera_mid_offset_percent))
+        mid = int(width / 2 * 1)
         x_offset = (left_x2 + right_x2) / 2 - mid
 
     y_offset = int(height / 2)
 
     angle_to_mid_radian = math.atan(x_offset / y_offset)  # angle (in radian) to center vertical line
     angle_to_mid_deg = int(angle_to_mid_radian * 180.0 / math.pi)  # angle (in degrees) to center vertical line
-    steering_angle = angle_to_mid_deg + 90  # this is the steering angle needed by picar front wheel
+    steering_angle = angle_to_mid_deg + 90  # this is the steering angle needed by piracer front wheel
     return steering_angle
 
   def stabilize_steering_angle(
@@ -86,10 +86,8 @@ class Lane:
           max_angle_deviation_one_lane=1):
 
     if num_of_lane_lines == 2 :
-        # if both lane lines detected, then we can deviate more
         max_angle_deviation = max_angle_deviation_two_lines
     else :
-        # if only one lane detected, don't deviate too much
         max_angle_deviation = max_angle_deviation_one_lane
 
     angle_deviation = new_steering_angle - curr_steering_angle
@@ -101,13 +99,15 @@ class Lane:
     return stabilized_steering_angle
 
   # Lane detection function
-  def detect_line_segments(self, cropped_edges):
+  def detect_line_segments(self, cropped_edges, plot=False):
     rho = 1  # distance precision in pixel, i.e. 1 pixel
     angle = np.pi / 180  # angular precision in radian, i.e. 1 degree
     min_threshold = 10  # minimal of votes
     line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold,
                                     np.array([]), minLineLength=90, maxLineGap=30)
 
+    if plot == True:
+      self.draw_line_segments(self.original_frame, line_segments)
     return line_segments
 
   def make_points(self, frame, line):
@@ -138,7 +138,6 @@ class Lane:
     boundary = 1/2
     left_region_boundary = width * (1 - boundary)
     right_region_boundary = width * boundary
-    # print(right_region_boundary)
     for line_segment in line_segments:
         for x1, y1, x2, y2 in line_segment:
             if x1 == x2:
@@ -151,13 +150,10 @@ class Lane:
                     left_fit.append((slope, intercept))
             else:
                 if x1 > right_region_boundary and x2 > right_region_boundary:
-                    # print("slope ", slope)
-                    # print(x1, y1, x2, y2)
                     right_fit.append((slope, intercept))
     if len(left_fit) > 0:
         left_fit_average = np.average(left_fit, axis=0)
         lane_lines.append(self.make_points(frame, left_fit_average))
-    # print(right_fit)
     if len(right_fit) > 0:
         right_fit_average = np.average(right_fit, axis=0)
         lane_lines.append(self.make_points(frame, right_fit_average))
@@ -180,6 +176,7 @@ class Lane:
     return cropped_edges
 
   def lane_tracker(self, original_frame):
+    self.original_frame = original_frame
     gaussian_frame = self.blur_gaussian(original_frame)
 
     hsv = cv2.cvtColor(gaussian_frame, cv2.COLOR_BGR2HSV)
@@ -190,28 +187,14 @@ class Lane:
     frame = self.Canny(mask, thresh=(100, 200))
 
     cropped_edges = self.region_of_interest(frame)
-    # cv2.imshow('cropped', cropped_edges)
 
-    line_segments = self.detect_line_segments(cropped_edges)
-    # self.draw_line_segments(original_frame, line_segments)
+    line_segments = self.detect_line_segments(cropped_edges, plot=False)
 
     lane_lines = self.average_slope_intercept(original_frame, line_segments)
-    lane_lines_image = self.display_lines(original_frame, lane_lines)
-    # cv2.imshow('Lane Detection', lane_lines_image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    lane_lines_image = self.display_lines(original_frame, lane_lines, plot=False)
 
     steering_angle = self.calc_steering_angle(original_frame, lane_lines)
     heading_image = self.display_heading_line(lane_lines_image, steering_angle)
-    self.curr_steering_angle = steering_angle
-    # self.curr_steering_angle = self.stabilize_steering_angle(self.curr_steering_angle, steering_angle, len(lane_lines))
+    self.curr_steering_angle = self.stabilize_steering_angle(self.curr_steering_angle, steering_angle, len(lane_lines))
 
     return self.curr_steering_angle * math.pi / 180, heading_image
-
-if __name__ == '__main__':
-  lane = Lane()
-  frame = cv2.imread('dataset/frame02_0468.jpg')
-  radian,frame =  lane.lane_tracker(frame)
-  cv2.imshow('frame', frame)
-  cv2.waitKey(0)
-  cv2.destroyAllWindows()
