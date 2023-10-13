@@ -13,6 +13,8 @@ from process import capture_img, control_car, automat_run
 from util.color import *
 
 TERM_SIZE = os.get_terminal_size().columns - 2
+STEERING_INIT = -0.2
+THROTTLE_INIT = 0.0
 
 def check_cwd():
     """
@@ -47,24 +49,26 @@ def multiprocess_create(*args):
 # - main
 if  __name__ == "__main__":
     check_cwd()
-    prcs = []
-    vehicle = PiRacerStandard()
-    gamepad = ShanWanGamepad()
 
+    prcs = []
     try:
+        vehicle = PiRacerStandard()
+        gamepad = ShanWanGamepad()
+        vehicle.set_steering_percent(STEERING_INIT)
+        vehicle.set_throttle_percent(THROTTLE_INIT)
+
         prcs = multiprocess_create(
             ["python3-capture-img", capture_img.capture_img, (1)],
-            # ["python3-control-car", control_car.control_car, (vehicle, gamepad)],
             ["python3-automat-run", automat_run.automat_run, (vehicle)],
+            # ["python3-control-car", control_car.control_car, (vehicle, gamepad)],
         )
-        print("Debug")
         for prc in prcs:
             prc.start()
         for prc in prcs:
             prc.join()
     except KeyboardInterrupt:
         print(
-            f"{CYA}{BOL}[INFORMT]{RES}    ",
+            f"\n{CYA}{BOL}[INFORMT]{RES}    ",
             f"Program has been stoped by Keyboard Inturrupt.",
             "\n",
             f"{CYA}{BOL}         {RES}    ",
@@ -81,5 +85,5 @@ if  __name__ == "__main__":
     finally:
         for prc in prcs:
             prc.terminate()
-        vehicle.set_steering_percent(0)
-        vehicle.set_throttle_percent(0)
+        vehicle.set_steering_percent(STEERING_INIT)
+        vehicle.set_throttle_percent(THROTTLE_INIT)
