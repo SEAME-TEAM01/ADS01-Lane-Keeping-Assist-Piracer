@@ -41,7 +41,7 @@ def run_action(vehicle, throttle, steering, duration):
         run_action_order(vehicle, throttle, -steering)
     vehicle.set_steering_percent(STEERING_INIT)
 
-def automat_run(vehicle):
+def automat_run_setting(vehicle):
     # Infor program start
     print(
         f"{CYA}{BOL}[INFORMT]{RES}    ",
@@ -60,6 +60,8 @@ def automat_run(vehicle):
         with open(CSVFILE, "w") as file:
             file.write("miliseconds,steering,throttle\n")
 
+def automat_run_right(vehicle):
+    automat_run_setting(vehicle)
     try:
         run_action(
             vehicle,
@@ -78,7 +80,50 @@ def automat_run(vehicle):
                 vehicle,
                 throttle=0.3,
                 steering=STEERING_INIT,
-                duration=1.6
+                duration=2.5
+            )
+    except Exception as exception:
+        print(
+            f"{RED}{BOL}[FAILURE]{RES}    ",
+            f"Unexpected exception has occured.\n",
+            f"{BOL}", "-"*TERM_SIZE, f"{RES}\n",
+            exception,
+            "-" * TERM_SIZE,
+        )
+        print(
+            f"{RED}{BOL}[FAILURE]{RES}    ",
+            f"Exception log by traceback:\n",
+            f"{BOL}", "-" * TERM_SIZE)
+        traceback.print_exc()
+        print(
+            "-" * TERM_SIZE, f"{RES}",
+        )
+    finally:
+        vehicle.set_steering_percent(THROTTLE_INIT)
+        vehicle.set_throttle_percent(STEERING_INIT)
+
+
+def automat_run_left(vehicle):
+    automat_run_setting(vehicle)
+    try:
+        run_action(
+            vehicle,
+            throttle=0.3,
+            steering=STEERING_INIT+0.06,
+            duration=2.45
+        )
+        while True:
+            run_action(
+                vehicle,
+                throttle=0.3,
+                steering=-0.65,
+                duration=4.65
+            )
+            run_action(
+                vehicle,
+                throttle=0.3,
+                steering=STEERING_INIT+0.06,
+                duration=2
             )
     except Exception as exception:
         print(

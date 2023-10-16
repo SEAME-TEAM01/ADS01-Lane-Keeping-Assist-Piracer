@@ -35,7 +35,7 @@ def capture_img(_):
     try:
         while True:
             rst, frame = cap.read()
-            frame = cv2.flip(frame, 0)
+            frame = cv2.flip(frame, -1)
 
             if not rst:
                 print(

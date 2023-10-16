@@ -10,14 +10,14 @@ from util.color import *
 CSVFILE = "dataset/record.csv"
 TERM_SIZE = os.get_terminal_size().columns
 THROTTLE_PARAM = 0.6
-STEERING_PARAM = 1.3
+STEERING_PARAM = -1.3
 
 # - control car program
 def control_car(vehicle, gamepad):
     # Infor program start
     print(
         f"{CYA}{BOL}[INFORMT]{RES}    ",
-        f"Capture-img process has been started at:",
+        f"Control-car process has been started at:",
         "\n",
         f"{CYA}{BOL}         {RES}    ",
         f"{time.time()}"

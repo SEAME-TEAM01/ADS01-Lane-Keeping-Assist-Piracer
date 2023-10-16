@@ -40,7 +40,7 @@ def multiprocess_create(*args):
         prc = Process(
             name    = arg[0],
             target  = arg[1],
-            args    = (arg[2],)
+            args    = arg[2],
         )
         prcs.append(prc)
     return prcs
@@ -58,9 +58,10 @@ if  __name__ == "__main__":
         vehicle.set_throttle_percent(THROTTLE_INIT)
 
         prcs = multiprocess_create(
-            ["python3-capture-img", capture_img.capture_img, (1)],
-            ["python3-automat-run", automat_run.automat_run, (vehicle)],
-            # ["python3-control-car", control_car.control_car, (vehicle, gamepad)],
+            ["python3-capture-img", capture_img.capture_img, ("1")],
+            # ["python3-automat-run", automat_run.automat_run_right, (vehicle)],
+            # ["python3-automat-run", automat_run.automat_run_left, (vehicle)],
+            ["python3-control-car", control_car.control_car, (vehicle, gamepad)],
         )
         for prc in prcs:
             prc.start()
