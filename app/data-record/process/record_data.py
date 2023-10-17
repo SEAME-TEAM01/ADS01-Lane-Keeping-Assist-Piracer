@@ -8,10 +8,11 @@ from util.color import *
 
 # - variables
 VIDEO = 0
+CSV_FILE = "dataset/record.csv"
 TERM_SIZE = os.get_terminal_size().columns
 
 # - capture img program
-def capture_img(_):
+def record_data(vehicle):
     # Infor program start
     print(
         f"{CYA}{BOL}[INFORMT]{RES}    ",
@@ -20,6 +21,11 @@ def capture_img(_):
         f"{CYA}{BOL}         {RES}    ",
         f"{time.time()}"
     )
+
+    # file check
+    if  not os.path.exists(CSV_FILE):
+        with open(CSV_FILE, "w") as file:
+            file.write("index,steering\n")
 
     # Start video capture
     cap = cv2.VideoCapture(VIDEO)
@@ -33,9 +39,11 @@ def capture_img(_):
         return
     
     try:
+        index = 0
         while True:
-            rst, frame = cap.read()
-            frame = cv2.flip(frame, -1)
+            rst, frame  = cap.read()
+            frame       = cv2.flip(frame, -1)
+            steering    = vehicle.get_steering_raw_data()
 
             if not rst:
                 print(
@@ -53,7 +61,11 @@ def capture_img(_):
                 )
                 break
             
-            cv2.imwrite(f'dataset/frames/frame_{time.time()}.jpg', frame)
+            cv2.imwrite(f'dataset/frames/frame_{index}_{steering}.jpg', frame)
+            with open(CSV_FILE, "a") as csv_file:
+                csv_file.write(f"{index},{steering}\n")
+            index += 1
+
     except Exception as exception:
         print(
             f"{RED}{BOL}[FAILURE]{RES}    ",

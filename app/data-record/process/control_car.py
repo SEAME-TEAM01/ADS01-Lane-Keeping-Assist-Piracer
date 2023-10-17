@@ -7,10 +7,9 @@ import traceback
 from util.color import *
 
 # - variables
-CSVFILE = "dataset/record.csv"
 TERM_SIZE = os.get_terminal_size().columns
 THROTTLE_PARAM = 0.6
-STEERING_PARAM = -1.3
+STEERING_PARAM = -2
 
 # - control car program
 def control_car(vehicle, gamepad):
@@ -27,11 +26,6 @@ def control_car(vehicle, gamepad):
     vehicle.set_steering_percent(0)
     vehicle.set_throttle_percent(0)
 
-    # Check csv label
-    if  not os.path.exists(CSVFILE):
-        with open(CSVFILE, "w") as file:
-            file.write("miliseconds,steering,throttle\n")
-
     try:
         while True:
             gamepad_input   = gamepad.read_data()
@@ -40,10 +34,6 @@ def control_car(vehicle, gamepad):
 
             vehicle.set_throttle_percent(throttle * THROTTLE_PARAM)
             vehicle.set_steering_percent(steering * STEERING_PARAM)
-
-            # Log steering and frame info
-            with open(CSVFILE, "a") as csv_file:
-                csv_file.write(f"{time.time()},{steering},{throttle}\n")
 
     except Exception as exception:
         print(

@@ -18,9 +18,6 @@ STEERING_INIT = -0.2
 def run_action_order(vehicle, throttle, steering):
     vehicle.set_throttle_percent(throttle * THROTTLE_PARAM)
     vehicle.set_steering_percent(steering * STEERING_PARAM)
-    with open(CSVFILE, "a") as csv_file:
-        csv_file.write(f"{time.time()},{steering},{throttle}\n")
-
 
 def run_action(vehicle, throttle, steering, duration):
     if  throttle > 1.0 or throttle < -1.0 or\
@@ -54,11 +51,6 @@ def automat_run_setting(vehicle):
     # Initialize objects
     vehicle.set_throttle_percent(THROTTLE_INIT)
     vehicle.set_steering_percent(STEERING_INIT)
-
-    # Check csv label
-    if  not os.path.exists(CSVFILE):
-        with open(CSVFILE, "w") as file:
-            file.write("miliseconds,steering,throttle\n")
 
 def automat_run_right(vehicle):
     automat_run_setting(vehicle)
