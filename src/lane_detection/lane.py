@@ -104,7 +104,7 @@ class Lane:
     angle = np.pi / 180  # angular precision in radian, i.e. 1 degree
     min_threshold = 10  # minimal of votes
     line_segments = cv2.HoughLinesP(cropped_edges, rho, angle, min_threshold,
-                                    np.array([]), minLineLength=90, maxLineGap=30)
+                                    np.array([]), minLineLength=100, maxLineGap=40)
 
     if plot == True:
       self.draw_line_segments(self.original_frame, line_segments)
@@ -137,6 +137,7 @@ class Lane:
 
     boundary = 1/2
     left_region_boundary = width * (1 - boundary)
+    # print(left_region_boundary)
     right_region_boundary = width * boundary
     for line_segment in line_segments:
         for x1, y1, x2, y2 in line_segment:
@@ -145,13 +146,16 @@ class Lane:
             fit = np.polyfit((x1, x2), (y1, y2), 1)
             slope = fit[0]
             intercept = fit[1]
-            if slope < 0.3:
+            if slope < -0.08:
                 if x1 < left_region_boundary and x2 < left_region_boundary:
+                    # print(x1, x2)
+                    # print('slope', slope)
                     left_fit.append((slope, intercept))
             else:
                 if x1 > right_region_boundary and x2 > right_region_boundary:
                     right_fit.append((slope, intercept))
     if len(left_fit) > 0:
+        # print(left_fit)
         left_fit_average = np.average(left_fit, axis=0)
         lane_lines.append(self.make_points(frame, left_fit_average))
     if len(right_fit) > 0:
@@ -197,4 +201,4 @@ class Lane:
     heading_image = self.display_heading_line(lane_lines_image, steering_angle)
     self.curr_steering_angle = self.stabilize_steering_angle(self.curr_steering_angle, steering_angle, len(lane_lines))
 
-    return self.curr_steering_angle * math.pi / 180, heading_image
+    return self.curr_steering_angle, self.curr_steering_angle * math.pi / 180, heading_image
