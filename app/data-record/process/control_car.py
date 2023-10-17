@@ -9,7 +9,7 @@ from util.color import *
 # - variables
 TERM_SIZE = os.get_terminal_size().columns
 THROTTLE_PARAM = 0.6
-STEERING_PARAM = -2
+STEERING_PARAM = -1.5
 
 # - control car program
 def control_car(vehicle, gamepad):
@@ -26,6 +26,7 @@ def control_car(vehicle, gamepad):
     vehicle.set_steering_percent(0)
     vehicle.set_throttle_percent(0)
 
+    # vehicle.set_steering_percent(-300)
     try:
         while True:
             gamepad_input   = gamepad.read_data()

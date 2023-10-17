@@ -26,6 +26,7 @@ class PiRacerBase:
     def _set_channel_active_time(cls, time: float, pwm_controller: PCA9685, channel: int) -> None:
         raw_value = int(cls.PWM_MAX_RAW_VALUE * (time / cls.PWM_WAVELENGTH_50HZ))
         pwm_controller.channels[channel].duty_cycle = raw_value
+        # -1176 ~ 65746
 
     # custom method
     @classmethod
@@ -84,8 +85,8 @@ class PiRacerStandard(PiRacerBase):
 
     # --------------------------------------------------------------------------
     # custom values
-    STEERING_MIN = 1632
-    STEERING_MAX = 8176
+    STEERING_MIN = 2448
+    STEERING_MAX = 7360
     # --------------------------------------------------------------------------
 
     def __init__(self) -> None:
