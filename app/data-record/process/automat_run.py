@@ -11,8 +11,8 @@ CSVFILE = "dataset/record.csv"
 TERM_SIZE = os.get_terminal_size().columns
 THROTTLE_PARAM = 1.0
 THROTTLE_INIT = 0.0
-STEERING_PARAM = 1.6
-STEERING_INIT = -0.2
+STEERING_PARAM = 1.5
+STEERING_INIT = 0
 
 # - automat run program
 def run_action_order(vehicle, throttle, steering):
