@@ -33,7 +33,7 @@ class PiRacerBase:
 
     @classmethod
     def _get_50hz_duty_cycle_from_percent(cls, value: float) -> float:
-        return 0.0014105 + (value * 0.0005)
+        return 0.001393 + (value * 0.0005)
 
     def __init__(self) -> None:
         self.i2c_bus = busio.I2C(SCL, SDA)
