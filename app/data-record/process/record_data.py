@@ -8,7 +8,8 @@ from util.color import *
 
 # - variables
 VIDEO = 0
-CSV_FILE = "dataset/record.csv"
+DATASET = "dataset2/"
+CSV = DATASET+"record.csv"
 TERM_SIZE = os.get_terminal_size().columns
 
 # - capture img program
@@ -23,9 +24,19 @@ def record_data(vehicle):
     )
 
     # file check
-    if  not os.path.exists(CSV_FILE):
-        with open(CSV_FILE, "w") as file:
-            file.write("index,steering\n")
+    index = 0
+    if  not os.path.exists(CSV):
+        with open(CSV, "w") as file:
+            file.write("index,steering,throttle_left,throttle_right,direction(front-0/left-1/right-2)\n")
+    else:
+        with open(CSV, "r") as file:
+            lines = file.readlines()
+            if len(lines) > 1:
+                last_line = lines[-1].strip()
+                last_index = int(last_line.split(",")[0])
+                index = last_index + 1
+
+
 
     # Start video capture
     cap = cv2.VideoCapture(VIDEO)
@@ -39,11 +50,20 @@ def record_data(vehicle):
         return
     
     try:
-        index = 0
         while True:
             rst, frame  = cap.read()
             frame       = cv2.flip(frame, -1)
             steering    = vehicle.get_steering_raw_data()
+            throttle    = vehicle.get_throttle_raw_data()
+            direction   = 0
+            if (steering < 4000):
+                direction = 1
+            elif (steering > 5000):
+                direction = 2
+            # elif (steering == 4560):
+            #     print(
+            #         f"{GRE}{BOL}[SUCCESS]{RES}    ",
+            #         f"Steering is exactly 4560!")
 
             if not rst:
                 print(
@@ -61,9 +81,9 @@ def record_data(vehicle):
                 )
                 break
             
-            cv2.imwrite(f'dataset/frames/frame_{index}_{steering}.jpg', frame)
-            with open(CSV_FILE, "a") as csv_file:
-                csv_file.write(f"{index},{steering}\n")
+            cv2.imwrite(f'{DATASET}/frames/frame_{index}_{steering}.jpg', frame)
+            with open(CSV, "a") as csv_file:
+                csv_file.write(f"{index},{steering},{throttle[0]},{throttle[1]},{direction}\n")
             index += 1
 
     except Exception as exception:

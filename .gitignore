@@ -4,6 +4,7 @@
 *logs/
 frame*.jpg
 *.csv
+*workspace
 
 # ------------------------------------------------------------------------------
 # PYTHON DEFAULT GITIGNORE

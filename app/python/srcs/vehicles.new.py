@@ -9,7 +9,6 @@ from adafruit_pca9685 import PCA9685
 from adafruit_ina219 import INA219
 from adafruit_ssd1306 import SSD1306_I2C
 
-
 class PiRacerBase:
     """
     Base class that contains everything common from PiRacer Standard and PiRacer Pro
@@ -26,7 +25,6 @@ class PiRacerBase:
     def _set_channel_active_time(cls, time: float, pwm_controller: PCA9685, channel: int) -> None:
         raw_value = int(cls.PWM_MAX_RAW_VALUE * (time / cls.PWM_WAVELENGTH_50HZ))
         pwm_controller.channels[channel].duty_cycle = raw_value
-        # -1176 ~ 65746
 
     # custom method
     @classmethod
@@ -35,7 +33,7 @@ class PiRacerBase:
 
     @classmethod
     def _get_50hz_duty_cycle_from_percent(cls, value: float) -> float:
-        return 0.0015 + (value * 0.0005)
+        return 0.0014105 + (value * 0.0005)
 
     def __init__(self) -> None:
         self.i2c_bus = busio.I2C(SCL, SDA)
@@ -85,8 +83,8 @@ class PiRacerStandard(PiRacerBase):
 
     # --------------------------------------------------------------------------
     # custom values
-    STEERING_MIN = 2448
-    STEERING_MAX = 7360
+    STEERING_MIN = 1632
+    STEERING_MAX = 8176
     # --------------------------------------------------------------------------
 
     def __init__(self) -> None:
@@ -121,6 +119,11 @@ class PiRacerStandard(PiRacerBase):
         """
         self._set_channel_active_time(self._get_50hz_duty_cycle_from_percent(-value), self.steering_pwm_controller, self.PWM_STEERING_CHANNEL)
         pass
+
+    # def set_steering_raw_data(self, value: int) -> None:
+    #     percent = self.standardize(value, self.STEERING_MIN, self.STEERING_MAX)
+    #     self._set_channel_active_time(self._get_50hz_duty_cycle_from_percent(-percent), self.steering_pwm_controller, self.PWM_STEERING_CHANNEL)
+    #     pass
 
     def set_throttle_percent(self, value: float) -> None:
         """Set the desired throttle value in percent.
