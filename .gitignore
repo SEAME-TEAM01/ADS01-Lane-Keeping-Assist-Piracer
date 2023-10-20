@@ -5,6 +5,7 @@
 frame*.jpg
 *.csv
 *workspace
+.DS_Store
 
 # ------------------------------------------------------------------------------
 # PYTHON DEFAULT GITIGNORE
