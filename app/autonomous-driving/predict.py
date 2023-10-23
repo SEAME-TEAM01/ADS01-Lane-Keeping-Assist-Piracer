@@ -13,10 +13,6 @@ from    tensorflow.keras.models \
 from    tensorflow.keras.utils \
         import  to_categorical
 
-from    sklearn.metrics \
-        import  confusion_matrix, \
-                classification_report
-
 # Custom Library Import
 from    srcs.colors \
         import  *
@@ -24,6 +20,8 @@ from    srcs.variables \
         import  *
 from    srcs.preprocess \
         import  load_image
+from    srcs.plot \
+        import  plot_predict
 
 # ------------------------------------------------------------------------------
 # predict
@@ -60,35 +58,7 @@ def predict():
     labels_actual   = [label_dict[idx] for idx in labels_actual]
     labels_predict  = [label_dict[idx] for idx in labels_predict]
 
-    confusion_mat   = confusion_matrix(
-        labels_actual,
-        labels_predict,
-        labels=label_list
-    )
-
-
-    # Confusion Matrix Visualize
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(
-        confusion_mat,
-        annot=True,
-        fmt='d',
-        cmap='Blues',
-        xticklabels=label_list,
-        yticklabels=label_list
-    )
-    plt.xlabel('Predicted Labels')
-    plt.ylabel('True Labels')
-    plt.title('Confusion Matrix')
-    plt.show()
-
-    # Precision, Recall, F1-Score
-    report = classification_report(
-        labels_actual,
-        labels_predict,
-        target_names=label_list
-    )
-    print(report)
+    plot_predict(labels_actual, labels_predict, label_list)
 
 # ------------------------------------------------------------------------------
 # Main

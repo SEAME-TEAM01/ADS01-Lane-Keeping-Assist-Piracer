@@ -1,6 +1,9 @@
 # ------------------------------------------------------------------------------
 # Third-party Library Import
 import  matplotlib.pyplot as plt
+from    sklearn.metrics \
+        import  confusion_matrix, \
+                classification_report
 
 # ------------------------------------------------------------------------------
 def plot_fit(history):
@@ -20,3 +23,33 @@ def plot_fit(history):
     plt.title('Accuracy Evolution')
     plt.tight_layout()
     plt.show()
+
+def plot_predict(labels_actual, labels_predict, label_list):
+    # Confusion Matrix Visualize
+    confusion_mat   = confusion_matrix(
+        labels_actual,
+        labels_predict,
+        labels=label_list
+    )
+
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(
+        confusion_mat,
+        annot=True,
+        fmt='d',
+        cmap='Blues',
+        xticklabels=label_list,
+        yticklabels=label_list
+    )
+    plt.xlabel('Predicted Labels')
+    plt.ylabel('True Labels')
+    plt.title('Confusion Matrix')
+    plt.show()
+
+    # Precision, Recall, F1-Score
+    report = classification_report(
+        labels_actual,
+        labels_predict,
+        target_names=label_list
+    )
+    print(report)
