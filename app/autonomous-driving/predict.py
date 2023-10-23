@@ -52,7 +52,7 @@ def predict():
     labels_actual   = np.argmax(labels, axis=1)          # Convert from one-hot to label format
 
     accuracy        = np.mean(labels_predict == labels_actual)
-    print(ㅎ
+    print(
         f"{CYA}{BOL}[INFORMT]{RES}    ",
         f"Prediction accuracy: {GRE}{BOL}{accuracy * 100:.2f}{RES}%",
     )

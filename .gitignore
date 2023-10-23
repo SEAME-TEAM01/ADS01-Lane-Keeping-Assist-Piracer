@@ -6,6 +6,7 @@ frame*.jpg
 *.csv
 *workspace
 .DS_Store
+predict.csv
 
 # ------------------------------------------------------------------------------
 # PYTHON DEFAULT GITIGNORE
