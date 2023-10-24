@@ -36,7 +36,7 @@ from    srcs.plot \
 # Model
 def ft_model():
     model = Sequential([
-        Conv2D(24, (5,5), activation='relu', input_shape=(HEIGHT, WIDTH, 1)),
+        Conv2D(24, (5,5), activation='relu', input_shape=(HEIGHT, WIDTH, 3)),
         MaxPooling2D((2,2)),
         Conv2D(36, (5,5), activation='relu'),
         MaxPooling2D((2,2)),
@@ -112,7 +112,7 @@ def fit():
             f"{CYA}{BOL}[INFORMT]{RES}    ",
             f"Dataset reshaping and data split:",
         )
-        data = data.reshape(data.shape[0], HEIGHT, WIDTH, 1)
+        data = data.reshape(data.shape[0], HEIGHT, WIDTH, 3)
         # - Splitting into Train (60%), tmp (40% -> will be split further into Validation and Predict)
         data_train, data_tmp, label_train, label_tmp, idx_train, idx_tmp = \
             train_test_split(
@@ -185,9 +185,7 @@ def fit():
             f"{GRE}{BOL}Completed,{RES} model file is saved as \"{MODEL}\".",
         )
 
-
         plot_fit(history)
-
 
     except Exception as exception:
         print(

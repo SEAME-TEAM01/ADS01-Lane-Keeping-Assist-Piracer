@@ -16,7 +16,7 @@ def preprocessing(pth, isTest=False):
     # Image Load
     image = cv2.imread(pth, cv2.IMREAD_COLOR)
     # Filtering : Convert to gray-scale and blur
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.GaussianBlur(image, (5, 5), 0)
     # Image resize
     image = cv2.resize(image, (WIDTH, HEIGHT))
