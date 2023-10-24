@@ -8,7 +8,7 @@ from util.color import *
 
 # - variables
 VIDEO = 0
-DATASET = "dataset2/"
+DATASET = "dataset/"
 CSV = DATASET+"record.csv"
 TERM_SIZE = os.get_terminal_size().columns
 

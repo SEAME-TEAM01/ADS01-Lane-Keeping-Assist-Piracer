@@ -6,12 +6,13 @@ import  os
 # Value Settings
 WIDTH           = 640
 HEIGHT          = 480
+HEIGHT_CUT      = int(480 / 4)
 
 DATASET         = "dataset/"
 FRAMES          = DATASET+"frames/"
 CSV             = DATASET+"record.csv"
 CSV_PRED        = DATASET+"predict.csv"
-MODEL           = "model.color.h5"
+MODEL           = "model.h5"
 
 TERM_SIZE       = os.get_terminal_size().columns - 2
 VIDEO           = 0
@@ -23,4 +24,4 @@ THROTTLE_PARAM  = 1.0
 
 STEERING_LEFT   = -0.57
 STEERING_RIGHT  = 0.76
-THROTTLE        = 0.3
+THROTTLE        = 0.2
