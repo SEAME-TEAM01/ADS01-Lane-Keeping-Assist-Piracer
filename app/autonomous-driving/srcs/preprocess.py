@@ -38,19 +38,19 @@ def preprocessing(image, mode=0):
         mode=3 : no cut, flip 0
         mode=4 : top cut, flip 0
     """
-    # Filtering : Convert to gray-scale and blur
+    # Filtering
     image = cv2.GaussianBlur(image, (3,3), 0)
     # Image resize
     if mode == 1:
         image = cv2.flip(image, -1)
     if mode == 2:
-        image = image[HEIGHT_CUT:, :]
         image = cv2.flip(image, -1)
+        image = image[HEIGHT_CUT:, :]
     if mode == 3:
         image = cv2.flip(image, 0)
     if mode == 4:
-        image = image[HEIGHT_CUT:, :]
         image = cv2.flip(image, -1)
+        image = image[HEIGHT_CUT:, :]
     image = cv2.resize(image, (WIDTH, HEIGHT))
     # Normalization
     image = image / 255.0

@@ -24,7 +24,7 @@ def run():
     capture = cv2.VideoCapture(VIDEO)
     vehicle = PiRacerStandard()
     model   = load_model(MODEL, compile=False)
-    capture.set(cv2.CAP_PROP_FPS, 40)
+    capture.set(cv2.CAP_PROP_FPS, FPS)
 
     try:
         vehicle.set_steering_percent(STEERING_INIT)
@@ -40,12 +40,11 @@ def run():
                     f"Failed to grab frame. Check the camera[{BOL}/dev/video0{RES}]",
                 )
                 break
-            frame = cv2.flip(frame, -1)
             if (len(detect_orange_lines(frame)) < 2):
                 excep_cnt += 1
             else:
                 excep_cnt = 0
-            if (excep_cnt > 5):
+            if (excep_cnt > 15):
                 vehicle.set_steering_percent(STEERING_INIT * STEERING_PARAM)
                 vehicle.set_throttle_percent(-1 * THROTTLE * THROTTLE_PARAM)
             elif (excep_cnt > 30):
@@ -54,15 +53,15 @@ def run():
                     f"Car could not find right way. Please let me back in track 😒",
                 )
                 break
-            elif (frame_cnt % 4 == 0):
-                frame = preprocessing(frame)
+            if (frame_cnt % 4 == 0):
+                frame = preprocessing(frame, mode=1)
                 frame = frame.reshape(1, frame.shape[0], frame.shape[1], 3)
+                throttle = THROTTLE
+                steering = STEERING_INIT
+
                 predict = model.predict(frame)
                 predict_label = np.argmax(predict, axis=1)[0]
                 print(predict, predict_label)
-                cv2.imwrite(f'frame_{frame_cnt}_{predict_label}.jpg', frame)
-                throttle = THROTTLE
-                steering = STEERING_INIT
                 if predict_label == 0:
                     steering = STEERING_INIT
                 elif predict_label == 1:
@@ -71,7 +70,6 @@ def run():
                     steering = STEERING_RIGHT
                 vehicle.set_throttle_percent(throttle * THROTTLE_PARAM)
                 vehicle.set_steering_percent(steering * STEERING_PARAM)
-
             frame_cnt += 1
 
 
