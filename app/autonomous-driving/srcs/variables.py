@@ -12,7 +12,7 @@ DATASET         = "dataset/"
 FRAMES          = DATASET+"frames/"
 CSV             = DATASET+"record.csv"
 CSV_PRED        = DATASET+"predict.csv"
-MODEL           = "model.h5"
+MODEL           = "model/model.h5"
 
 TERM_SIZE       = os.get_terminal_size().columns - 2
 VIDEO           = 0
