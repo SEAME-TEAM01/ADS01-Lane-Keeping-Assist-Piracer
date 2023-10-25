@@ -29,12 +29,28 @@ def detect_orange_lines(image):
 
 # ------------------------------------------------------------------------------
 # Preprocessor
-def preprocessing(image):
+def preprocessing(image, mode=0):
+    """
+    The mode is for various type of images.
+        mode=0 : default, no top cut, no flip
+        mode=1 : no cut, flip -1
+        mode=2 : top cut, flip -1
+        mode=3 : no cut, flip 0
+        mode=4 : top cut, flip 0
+    """
     # Filtering : Convert to gray-scale and blur
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.GaussianBlur(image, (3,3), 0)
     # Image resize
-    image = image[HEIGHT_CUT:, :]
+    if mode == 1:
+        image = cv2.flip(image, -1)
+    if mode == 2:
+        image = image[HEIGHT_CUT:, :]
+        image = cv2.flip(image, -1)
+    if mode == 3:
+        image = cv2.flip(image, 0)
+    if mode == 4:
+        image = image[HEIGHT_CUT:, :]
+        image = cv2.flip(image, -1)
     image = cv2.resize(image, (WIDTH, HEIGHT))
     # Normalization
     image = image / 255.0
@@ -42,7 +58,7 @@ def preprocessing(image):
 
 # ------------------------------------------------------------------------------
 # Image Loader
-def load_image(csv, isTest=False):
+def load_image(csv):
     images = []
     labels = []
 
@@ -53,7 +69,7 @@ def load_image(csv, isTest=False):
         pth = f"{FRAMES}/frame_{idx}_{str}.jpg"
 
         image = cv2.imread(pth, cv2.IMREAD_COLOR)
-        image = preprocessing(pth)
+        image = preprocessing(image, mode=0)
         images.append(image)
         labels.append(dir)
 

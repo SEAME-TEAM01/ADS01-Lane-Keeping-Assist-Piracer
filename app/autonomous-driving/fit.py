@@ -1,13 +1,16 @@
 # ------------------------------------------------------------------------------
 # Library Import
 import  os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' 
+
 import  cv2
 import  numpy as np
 import  pandas as pd
 import  tensorflow as tf
 
 from    tensorflow.keras.models \
-        import  Sequential
+        import  Sequential, \
+                load_model
 from    tensorflow.keras.layers \
         import  Conv2D, \
                 MaxPooling2D, \
@@ -34,7 +37,7 @@ from    srcs.plot \
 # ------------------------------------------------------------------------------ import plot_fit
 
 # Model
-def ft_model():
+def ft_new_model():
     model = Sequential([
         Conv2D(24, (5,5), activation='relu', input_shape=(HEIGHT, WIDTH, 3)),
         MaxPooling2D((2,2)),
@@ -49,6 +52,15 @@ def ft_model():
         Dropout(0.5),
         Dense(3, activation='softmax')  # 3 Classes : Front/Left/Right
     ])
+    model.compile(
+        optimizer   = Adam(learning_rate=0.0001),
+        loss        = 'categorical_crossentropy',
+        metrics     = ['accuracy']
+    )
+    return model
+
+def ft_load_model():
+    model = load_model(MODEL)
     model.compile(
         optimizer   = Adam(learning_rate=0.0001),
         loss        = 'categorical_crossentropy',
@@ -100,9 +112,8 @@ def fit():
         print(
             f"{CYA}{BOL}         {RES}    ",
             f"Label distribution in training data:\n",
-            '-'*TERM_SIZE, "\n",
-            f"{label_dist}\n",
-            '-'*TERM_SIZE, "\n",
+            f"{CYA}{BOL}         {RES}    ",
+            f"{BOL}{label_dist}{RES}\n",
             f"{CYA}{BOL}        {RES}    ",
             f"{GRE}{BOL}Completed.{RES}",
         )
@@ -119,7 +130,7 @@ def fit():
                 data,
                 label,
                 csv['index'],  # Adding the index for tracking
-                test_size=0.4,
+                test_size=0.8,
                 random_state=42,
                 shuffle=True
             )
@@ -137,9 +148,9 @@ def fit():
         pd.DataFrame({'index': idx_pred}).to_csv(CSV_PRED, index=False)
         print(
             f"{CYA}{BOL}         {RES}    ",
-            f"{GRE}{BOL}Completed.{RES}\n",
-            f"{CYA}{BOL}         {RES}    ",
-            f"{GRE}{BOL}Indices of Predict set saved to 'predict_indices.csv'.{RES}",
+            f"{GRE}{BOL}Completed.{RES}",
+            f"\n{CYA}{BOL}         {RES}    ",
+            f"{GRE}{BOL}Indices of Predict set saved to {BOL}[{CSV_PRED}]{RES}.{RES}",
         )
 
         # CNN Model
@@ -147,7 +158,8 @@ def fit():
             f"{CYA}{BOL}[INFORMT]{RES}    ",
             f"CNN Model Build:",
         )
-        model = ft_model()
+        # model = ft_new_model()
+        model = ft_load_model()
         print(
             f"{CYA}{BOL}         {RES}    ",
             f"{GRE}{BOL}Completed.{RES}",
@@ -192,7 +204,7 @@ def fit():
             f"{RED}{BOL}[FAILURE]{RES}    ",
             f"Unexpected exception has occured.\n",
             '-'*TERM_SIZE, "\n",
-            exception, "\n",
+            f"{exception}\n",
             '-'*TERM_SIZE,
         )
 

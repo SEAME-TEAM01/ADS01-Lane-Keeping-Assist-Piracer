@@ -42,7 +42,7 @@ def predict():
 
     prd_indexes     = csv_predict['index'].values
     rows            = csv_org[csv_org['index'].isin(prd_indexes)]
-    images, labels  = load_image(rows, isTest=True)
+    images, labels  = load_image(rows)
 
     labels_predict  = predict_test(images, model)
     labels_predict  = np.argmax(labels_predict, axis=1)  # Convert from one-hot to label format
